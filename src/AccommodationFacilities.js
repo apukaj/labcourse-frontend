@@ -11,7 +11,8 @@ class AccommodationFacilities extends React.Component {
 		super(props);
 		this.state = {
 		  facilities: [],
-			facility: ''
+			facility: '',
+			information: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -30,7 +31,7 @@ class AccommodationFacilities extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { facility, facilities } = this.state
+		const { facility, information, facilities } = this.state
 
 		if (!facility) {
 			alert("Please provide a facility name!")
@@ -38,10 +39,11 @@ class AccommodationFacilities extends React.Component {
 		}
 
 		axios.post('https://localhost:44333/api/accommodationfacilities', {
-			name: facility
+			name: facility,
+			information
 		}).then(response => {
 			this.setState({facilities: [...facilities, response.data]})
-			this.setState({facility: ''})
+			this.setState({facility: '', information: ''})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -57,7 +59,7 @@ class AccommodationFacilities extends React.Component {
 	}
 
 	render() {
-		const { facility, facilities } = this.state
+		const { facility, information, facilities } = this.state
 		return (
 		<div>
 			<Row>
@@ -74,6 +76,16 @@ class AccommodationFacilities extends React.Component {
 							/>
 						</Form.Group>
 
+						<Form.Group controlId="information" style={{ marginBottom: 15 }}>
+							<Form.Label>Facility information</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Facility information"
+								value={information}
+								onChange={e => this.setState({information: e.target.value})}
+							/>
+						</Form.Group>
+
 						<Button variant="primary" type="submit">
 							Save facility
 						</Button>
@@ -85,6 +97,7 @@ class AccommodationFacilities extends React.Component {
 							<tr>
 								<th>#</th>
 								<th>Facility</th>
+								<th>Information</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
@@ -94,6 +107,7 @@ class AccommodationFacilities extends React.Component {
 								facilities.map(facility => <tr key={facility.id}>
 									<td>{facility.id}</td>
 									<td>{facility.name}</td>
+									<td>{facility.information}</td>
 									<td><Button variant="warning">Edit</Button></td>
 									<td>
 										<Button
