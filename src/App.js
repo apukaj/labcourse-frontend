@@ -17,6 +17,7 @@ function App() {
             <Nav.Link href="/accommodation-facilities">Accommodation Facilities</Nav.Link>
             <Nav.Link href="/login">Login</Nav.Link>
             <Nav.Link href="/register">Register</Nav.Link>
+            <Nav.Link href="/menus">Menus</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

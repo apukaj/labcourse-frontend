@@ -9,6 +9,7 @@ import About from './About';
 import Login from './Login';
 import Register from './Register';
 import Cities from './Cities';
+import Menu from './Menu';
 import AccommodationTypes from './AccommodationTypes';
 import AccommodationFacilities from './AccommodationFacilities'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -23,6 +24,7 @@ ReactDOM.render((
     <Route path="/accommodation-facilities" component={AccommodationFacilities} />
     <Route path="/login" component={Login} />
     <Route path="/register" component={Register} />
+    <Route path="/menus" component={Menu} />
   </BrowserRouter>
 ), document.getElementById('root'));
 
