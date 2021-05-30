@@ -10,6 +10,7 @@ import Login from './Login';
 import Register from './Register';
 import Cities from './Cities';
 import Menu from './Menu';
+import RoomType from './RoomType';
 import VendetTuristike from './VendetTuristike';
 import AccommodationTypes from './AccommodationTypes';
 import AccommodationFacilities from './AccommodationFacilities'
@@ -26,6 +27,7 @@ ReactDOM.render((
     <Route path="/login" component={Login} />
     <Route path="/register" component={Register} />
     <Route path="/menus" component={Menu} />
+    <Route path="/RoomType" component={RoomType} />
     <Route path="/VendetTuristike" component={VendetTuristike} />
   </BrowserRouter>
 ), document.getElementById('root'));
