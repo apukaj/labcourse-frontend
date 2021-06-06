@@ -1,13 +1,7 @@
-import React, { Component } from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import ButtonToolbar from 'react-bootstrap/ButtonToolbar';
-import axios from 'axios'
+import React,{Component} from 'react';
+import {Table} from 'react-bootstrap';
 
-
+import {Button,ButtonToolbar} from 'react-bootstrap';
 import {AddVendModal} from './AddVendModal';
 import {EditVendModal} from './EditVendModal';
 
@@ -37,7 +31,7 @@ export class VendetTuristike extends Component{
 
     deleteEmp(VendiId){
         if(window.confirm('Are you sure?')){
-            fetch(process.env.REACT_APP_API+'VendetTuristike /'+VendiId,{
+            fetch(process.env.REACT_APP_API+'VendetTuristike/'+VendiId,{
                 method:'DELETE',
                 header:{'Accept':'application/json',
             'Content-Type':'application/json'}
@@ -45,7 +39,7 @@ export class VendetTuristike extends Component{
         }
     }
     render(){
-        const {emps, empid,empname,emploc}=this.state;
+        const {emps, empid, empname, emploc}=this.state;
         let addModalClose=()=>this.setState({addModalShow:false});
         let editModalClose=()=>this.setState({editModalShow:false});
         return(
@@ -67,7 +61,7 @@ export class VendetTuristike extends Component{
 <ButtonToolbar>
     <Button className="mr-2" variant="info"
     onClick={()=>this.setState({editModalShow:true,
-      VendiId:emp.VendiId,empname:emp.VendiName,emploc:emp.VendLokacioni})}>
+      empid:emp.VendiId,empname:emp.VendiName,emploc:emp.VendLokacioni})}>
             Ndrysho
         </Button>
 

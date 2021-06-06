@@ -4,19 +4,7 @@ import {Modal,Button, Row, Col, Form} from 'react-bootstrap';
 export class AddVendModal extends Component{
     constructor(props){
         super(props);
-        this.state={deps:[]};
         this.handleSubmit=this.handleSubmit.bind(this);
-        /* this.handleFileSelected=this.handleFileSelected.bind(this);/*/
-    }
-
-
-
-    componentDidMount(){
-        fetch(process.env.REACT_APP_API+'VendetTuristike')
-        .then(response=>response.json())
-        .then(data=>{
-            this.setState({deps:data});
-        });
     }
 
     handleSubmit(event){
@@ -92,7 +80,7 @@ centered
     </Modal.Body>
     
     <Modal.Footer>
-        <Button variant="danger" onClick={this.props.onHide}>Close</Button>
+        <Button variant="danger" onClick={this.props.onHide}>Mbyll</Button>
     </Modal.Footer>
 
 </Modal>

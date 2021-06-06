@@ -103,7 +103,7 @@ export class RoomType extends Component{
                 <ButtonToolbar>
                     <Button variant='primary'
                     onClick={()=>this.setState({addModalShow:true})}>
-                    Shto nje vend</Button>
+                    Shto nje dhomë</Button>
 
 {/*
                     <AddVendModal show={this.state.addModalShow}

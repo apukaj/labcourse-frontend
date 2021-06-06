@@ -5,7 +5,7 @@ import Navbar from 'react-bootstrap/Navbar';
 function App() {
   return (
     <div className="App">
-      <Navbar bg="light" expand="lg">
+      <Navbar bg="green" expand="lg">
         <Navbar.Brand href="/home" style={{ padding: 10 }}>Hotelio</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
