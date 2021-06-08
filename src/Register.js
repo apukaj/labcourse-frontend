@@ -41,7 +41,7 @@ class Register extends React.Component {
 
     alert("We are registering you now. Thank you!!!")
 
-    axios.post('https://localhost:44333/api/identity/register', {
+    axios.post('https://localhost:5001/api/identity/register', {
       email,
       password
     }).then(response => {

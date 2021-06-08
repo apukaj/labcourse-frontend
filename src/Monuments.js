@@ -6,15 +6,15 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 
-class VendetTuristike extends React.Component {
+class Monuments extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  VendetTuristike: [],
-		  Vendi: {
-              name: '',
-              location: ''
-          }
+		  monuments: [],
+		  monument: {
+        name: '',
+        location: ''
+      }
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -22,9 +22,9 @@ class VendetTuristike extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:5001/api/VendetTuristike')
+		axios.get('https://localhost:5001/api/monuments')
 				 .then(response => {
-					 this.setState({VendetTuristike: response.data})
+					 this.setState({monuments: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -33,63 +33,63 @@ class VendetTuristike extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { Vendi, VendetTuristike } = this.state
+		const { monument, monuments } = this.state
 
-		if (!Vendi.name) {
+		if (!monument.name) {
 			alert("Please provide a name!")
 			return
 		}
 
-		axios.post('https://localhost:5001/api/VendetTuristike', {
-			name: Vendi.name,
-            location: Vendi.location
+		axios.post('https://localhost:5001/api/monuments', {
+			name: monument.name,
+      location: monument.location
 		}).then(response => {
-			this.setState({VendetTuristike: [...VendetTuristike, response.data]})
-			this.setState({Vendi: {name:'',location:''}})
+			this.setState({monuments: [...monuments, response.data]})
+			this.setState({monument: {name:'',location:''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	handleDelete(id) {
-		const { VendetTuristike } = this.state
-		axios.delete(`https://localhost:5001/api/VendetTuristike/${id}`).then(response => {
-			this.setState({VendetTuristike: VendetTuristike.filter(Vendi => Vendi.id !== id)})
+		const { monuments } = this.state
+		axios.delete(`https://localhost:5001/api/monuments/${id}`).then(response => {
+			this.setState({monuments: monuments.filter(Vendi => Vendi.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	render() {
-		const { Vendi, VendetTuristike } = this.state
+		const { monument, monuments } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add place</h1>
+					<h1>Add monument</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
 							<Form.Label>Name</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder="Name"
-								value={Vendi.name}
-								onChange={e => this.setState({Vendi: {...Vendi, name: e.target.value}})}
+								value={monument.name}
+								onChange={e => this.setState({monument: {...monument, name: e.target.value}})}
 							/>
 						</Form.Group>
 
-                        <Form.Group controlId="name" style={{ marginBottom: 15 }}>
+            <Form.Group controlId="name" style={{ marginBottom: 15 }}>
 							<Form.Label>Location</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder="Location"
-								value={Vendi.location}
-								onChange={e => this.setState({Vendi: {...Vendi, location: e.target.value}})}
+								value={monument.location}
+								onChange={e => this.setState({monument: {...monument, location: e.target.value}})}
 							/>
 						</Form.Group>
 
 						<Button variant="primary" type="submit">
-							Save place
+							Save monument
 						</Button>
 					</Form>
 				</Col>
@@ -99,22 +99,22 @@ class VendetTuristike extends React.Component {
 							<tr>
 								<th>#</th>
 								<th>Name</th>
-                                <th>Location</th>
+                <th>Location</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody>
 							{
-								VendetTuristike.map(vendi => <tr key={vendi.id}>
-									<td>{vendi.id}</td>
-									<td>{vendi.name}</td>
-									<td>{vendi.location}</td>
+								monuments.map(monument => <tr key={monument.id}>
+									<td>{monument.id}</td>
+									<td>{monument.name}</td>
+									<td>{monument.location}</td>
 									<td><Button variant="warning">Edit</Button></td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(vendi.id)}
+											onClick={() => this.handleDelete(monument.id)}
 										>
 											Delete
 										</Button>
@@ -129,4 +129,4 @@ class VendetTuristike extends React.Component {
 		)
 	}
 }
-export default VendetTuristike;
+export default Monuments;

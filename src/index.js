@@ -14,6 +14,10 @@ import RoomType from './RoomType';
 import VendetTuristike from './VendetTuristike';
 import AccommodationTypes from './AccommodationTypes';
 import AccommodationFacilities from './AccommodationFacilities'
+import Accommodations from './Accommodations'
+import RestaurantTypes from './RestarantTypes'
+import Monuments from './Monuments'
+import Nature from './Nature'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render((
@@ -22,13 +26,17 @@ ReactDOM.render((
     <Route path="/home" component={Home} />
     <Route path="/about" component={About} />
     <Route path="/cities" component={Cities} />
+    <Route path="/restaurant-types" component={RestaurantTypes} />
     <Route path="/accommodation-types" component={AccommodationTypes} />
     <Route path="/accommodation-facilities" component={AccommodationFacilities} />
+    <Route path="/accommodations" component={Accommodations} />
     <Route path="/login" component={Login} />
     <Route path="/register" component={Register} />
     <Route path="/menus" component={Menu} />
-    <Route path="/RoomType" component={RoomType} />
-    <Route path="/VendetTuristike" component={VendetTuristike} />
+    <Route path="/rooms" component={RoomType} />
+    <Route path="/places" component={VendetTuristike} />
+    <Route path="/monuments" component={Monuments} />
+    <Route path="/nature" component={Nature} />
   </BrowserRouter>
 ), document.getElementById('root'));
 

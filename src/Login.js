@@ -33,7 +33,7 @@ class Login extends React.Component {
 
 		alert("We are logging you in now. Thank you!!!")
 
-		axios.post('https://localhost:44333/api/identity/login', {
+		axios.post('https://localhost:5001/api/identity/login', {
 			email,
 			password
 		}).then(response => {

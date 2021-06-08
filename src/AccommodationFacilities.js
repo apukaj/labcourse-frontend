@@ -20,12 +20,12 @@ class AccommodationFacilities extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:44333/api/accommodationfacilities')
+		axios.get('https://localhost:5001/api/accommodationfacilities')
 				 .then(response => {
 					 this.setState({facilities: response.data})
 					 console.log(response)
 				 }).catch(error => {
-					 console.log(error.response.data)
+					 console.log(error)
 				 })
 	}
 
@@ -38,7 +38,7 @@ class AccommodationFacilities extends React.Component {
 			return
 		}
 
-		axios.post('https://localhost:44333/api/accommodationfacilities', {
+		axios.post('https://localhost:5001/api/accommodationfacilities', {
 			name: facility,
 			information
 		}).then(response => {
@@ -51,7 +51,7 @@ class AccommodationFacilities extends React.Component {
 
 	handleDelete(id) {
 		const { facilities } = this.state
-		axios.delete(`https://localhost:44333/api/accommodationfacilities/${id}`).then(response => {
+		axios.delete(`https://localhost:5001/api/accommodationfacilities/${id}`).then(response => {
 			this.setState({facilities: facilities.filter(facility => facility.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)

@@ -6,20 +6,24 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 
+
 class Cities extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 		  cities: [],
-			city: ''
+			city: '',
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:44333/api/cities')
+		axios.get('https://localhost:5001/api/cities')
 				 .then(response => {
 					 this.setState({cities: response.data})
 					 console.log(response)
@@ -37,7 +41,7 @@ class Cities extends React.Component {
 			return
 		}
 
-		axios.post('https://localhost:44333/api/cities', {
+		axios.post('https://localhost:5001/api/cities', {
 			name: city
 		}).then(response => {
 			this.setState({cities: [...cities, response.data]})
@@ -49,21 +53,45 @@ class Cities extends React.Component {
 
 	handleDelete(id) {
 		const { cities } = this.state
-		axios.delete(`https://localhost:44333/api/cities/${id}`).then(response => {
+		axios.delete(`https://localhost:5001/api/cities/${id}`).then(response => {
 			this.setState({cities: cities.filter(city => city.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { city, cities, editId } = this.state
+		axios.put(`https://localhost:5001/api/cities/${editId}`, {
+			id: editId,
+			name: city
+		}).then(response => {
+			const idx = cities.indexOf(cities.find(city => city.id === editId))
+			this.state.cities[idx].name = city
+			this.setState({
+				editId: '',
+				city: ''
+			})
+		}).catch(error => {
+			console.log(error.response.data)
+		})
+	}
+
+	handleEditClick(id) {
+		const { cities } = this.state
+		const editCity = cities.find(city => city.id === id)
+		this.setState({city: editCity.name, editId: id})
+	}
+
 	render() {
-		const { city, cities } = this.state
+		const { city, cities, editId } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
 					<h1>Add City</h1>
-					<Form onSubmit={this.handleSubmit}>
+					<Form>
 						<Form.Group controlId="formBasicEmail" style={{ marginBottom: 15 }}>
 							<Form.Label>City name</Form.Label>
 							<Form.Control
@@ -74,9 +102,18 @@ class Cities extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save city
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit city
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', city: ''})}>New City</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save city
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -94,7 +131,12 @@ class Cities extends React.Component {
 								cities.map(city => <tr key={city.id}>
 									<td>{city.id}</td>
 									<td>{city.name}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(city.id)}>
+											Edit
+										</Button></td>
 									<td>
 										<Button
 											variant="danger"

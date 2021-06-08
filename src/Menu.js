@@ -19,9 +19,9 @@ class Menus extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:44333/api/cities')
+		axios.get('https://localhost:5001/api/menus')
 				 .then(response => {
-					 this.setState({cities: response.data})
+					 this.setState({menus: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -37,7 +37,7 @@ class Menus extends React.Component {
 			return
 		}
 
-		axios.post('https://localhost:44333/api/menus', {
+		axios.post('https://localhost:5001/api/menus', {
 			name: menu
 		}).then(response => {
 			this.setState({menus: [...menus, response.data]})
@@ -47,15 +47,14 @@ class Menus extends React.Component {
 		})
 	}
 
-	/* handleDelete(id) {
+	handleDelete(id) {
 		const { menus } = this.state
-		axios.delete(`https://localhost:44333/api/menus/${id}`).then(response => {
-			this.setState({menus: menu.filter(menu => menu.id !== id)})
+		axios.delete(`https://localhost:5001/api/menus/${id}`).then(response => {
+			this.setState({menus: menus.filter(menu => menu.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
-	*/
 
 	render() {
 		const { menu, menus } = this.state

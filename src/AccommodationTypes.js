@@ -19,7 +19,7 @@ class AccommodationTypes extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:44333/api/accommodationtypes')
+		axios.get('https://localhost:5001/api/accommodationtypes')
 				 .then(response => {
 					 this.setState({types: response.data})
 					 console.log(response)
@@ -37,7 +37,7 @@ class AccommodationTypes extends React.Component {
 			return
 		}
 
-		axios.post('https://localhost:44333/api/accommodationtypes', {
+		axios.post('https://localhost:5001/api/accommodationtypes', {
 			name: type
 		}).then(response => {
 			this.setState({types: [...types, response.data]})
@@ -49,7 +49,7 @@ class AccommodationTypes extends React.Component {
 
 	handleDelete(id) {
 		const { types } = this.state
-		axios.delete(`https://localhost:44333/api/accommodationtypes/${id}`).then(response => {
+		axios.delete(`https://localhost:5001/api/accommodationtypes/${id}`).then(response => {
 			this.setState({types: types.filter(type => type.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)

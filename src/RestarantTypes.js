@@ -6,12 +6,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 
-class RoomTypes extends React.Component {
+class RestaurantTypes extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  rooms: [],
-			room: ''
+		  restaurants: [],
+			restaurant: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -19,9 +19,9 @@ class RoomTypes extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:5001/api/Room')
+		axios.get('https://localhost:5001/api/restauranttypes')
 				 .then(response => {
-					 this.setState({rooms: response.data})
+					 this.setState({restaurants: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -30,47 +30,47 @@ class RoomTypes extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { room, rooms } = this.state
+		const { restaurant, restaurants } = this.state
 
-		if (!room) {
+		if (!restaurant) {
 			alert("Please provide a type name!")
 			return
 		}
 
-		axios.post('https://localhost:5001/api/Room', {
-			name: room
+		axios.post('https://localhost:5001/api/restauranttypes', {
+			name: restaurant
 		}).then(response => {
-			this.setState({rooms: [...rooms, response.data]})
-			this.setState({room: ''})
+			this.setState({restaurants: [...restaurants, response.data]})
+			this.setState({restaurant: ''})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	handleDelete(id) {
-		const { rooms } = this.state
-		axios.delete(`https://localhost:5001/api/Room/${id}`).then(response => {
-			this.setState({rooms: rooms.filter(room => room.id !== id)})
+		const { restaurants } = this.state
+		axios.delete(`https://localhost:5001/api/restauranttypes/${id}`).then(response => {
+			this.setState({restaurants: restaurants.filter(restaurant => restaurant.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	render() {
-		const { room, rooms } = this.state
+		const { restaurant, restaurants } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add room type</h1>
+					<h1>Add restaurant type</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Room type</Form.Label>
+							<Form.Label>Restaurant type</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Room type"
-								value={room}
-								onChange={e => this.setState({room: e.target.value})}
+								placeholder="Restaurant type"
+								value={restaurant}
+								onChange={e => this.setState({restaurant: e.target.value})}
 							/>
 						</Form.Group>
 
@@ -91,14 +91,14 @@ class RoomTypes extends React.Component {
 						</thead>
 						<tbody>
 							{
-								rooms.map(room => <tr key={room.id}>
-									<td>{room.id}</td>
-									<td>{room.name}</td>
+								restaurants.map(restaurant => <tr key={restaurant.id}>
+									<td>{restaurant.id}</td>
+									<td>{restaurant.name}</td>
 									<td><Button variant="warning">Edit</Button></td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(room.id)}
+											onClick={() => this.handleDelete(restaurant.id)}
 										>
 											Delete
 										</Button>
@@ -113,4 +113,4 @@ class RoomTypes extends React.Component {
 		)
 	}
 }
-export default RoomTypes;
+export default RestaurantTypes;

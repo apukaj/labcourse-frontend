@@ -6,12 +6,15 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 
-class RoomTypes extends React.Component {
+class Parks extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  rooms: [],
-			room: ''
+		  parks: [],
+		  park: {
+        name: '',
+        location: ''
+      }
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -19,9 +22,9 @@ class RoomTypes extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:5001/api/Room')
+		axios.get('https://localhost:5001/api/parks')
 				 .then(response => {
-					 this.setState({rooms: response.data})
+					 this.setState({parks: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -30,52 +33,63 @@ class RoomTypes extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { room, rooms } = this.state
+		const { park, parks } = this.state
 
-		if (!room) {
-			alert("Please provide a type name!")
+		if (!park.name) {
+			alert("Please provide a name!")
 			return
 		}
 
-		axios.post('https://localhost:5001/api/Room', {
-			name: room
+		axios.post('https://localhost:5001/api/parks', {
+			name: park.name,
+      location: park.location
 		}).then(response => {
-			this.setState({rooms: [...rooms, response.data]})
-			this.setState({room: ''})
+			this.setState({parks: [...parks, response.data]})
+			this.setState({park: {name:'',location:''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	handleDelete(id) {
-		const { rooms } = this.state
-		axios.delete(`https://localhost:5001/api/Room/${id}`).then(response => {
-			this.setState({rooms: rooms.filter(room => room.id !== id)})
+		const { parks } = this.state
+		axios.delete(`https://localhost:5001/api/parks/${id}`).then(response => {
+			this.setState({parks: parks.filter(Vendi => Vendi.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	render() {
-		const { room, rooms } = this.state
+		const { park, parks } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add room type</h1>
+					<h1>Add park</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Room type</Form.Label>
+							<Form.Label>Name</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Room type"
-								value={room}
-								onChange={e => this.setState({room: e.target.value})}
+								placeholder="Name"
+								value={park.name}
+								onChange={e => this.setState({park: {...park, name: e.target.value}})}
+							/>
+						</Form.Group>
+
+            <Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>Location</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Location"
+								value={park.location}
+								onChange={e => this.setState({park: {...park, location: e.target.value}})}
 							/>
 						</Form.Group>
 
 						<Button variant="primary" type="submit">
-							Save type
+							Save park
 						</Button>
 					</Form>
 				</Col>
@@ -84,21 +98,23 @@ class RoomTypes extends React.Component {
 						<thead>
 							<tr>
 								<th>#</th>
-								<th>Type</th>
+								<th>Name</th>
+                <th>Location</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody>
 							{
-								rooms.map(room => <tr key={room.id}>
-									<td>{room.id}</td>
-									<td>{room.name}</td>
+								parks.map(park => <tr key={park.id}>
+									<td>{park.id}</td>
+									<td>{park.name}</td>
+									<td>{park.location}</td>
 									<td><Button variant="warning">Edit</Button></td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(room.id)}
+											onClick={() => this.handleDelete(park.id)}
 										>
 											Delete
 										</Button>
@@ -113,4 +129,4 @@ class RoomTypes extends React.Component {
 		)
 	}
 }
-export default RoomTypes;
+export default Parks;

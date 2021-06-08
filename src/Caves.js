@@ -6,12 +6,15 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 
-class RoomTypes extends React.Component {
+class Caves extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  rooms: [],
-			room: ''
+		  caves: [],
+		  cave: {
+        name: '',
+        location: ''
+      }
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -19,9 +22,9 @@ class RoomTypes extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:5001/api/Room')
+		axios.get('https://localhost:5001/api/caves')
 				 .then(response => {
-					 this.setState({rooms: response.data})
+					 this.setState({caves: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -30,52 +33,63 @@ class RoomTypes extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { room, rooms } = this.state
+		const { cave, caves } = this.state
 
-		if (!room) {
-			alert("Please provide a type name!")
+		if (!cave.name) {
+			alert("Please provide a name!")
 			return
 		}
 
-		axios.post('https://localhost:5001/api/Room', {
-			name: room
+		axios.post('https://localhost:5001/api/caves', {
+			name: cave.name,
+      location: cave.location
 		}).then(response => {
-			this.setState({rooms: [...rooms, response.data]})
-			this.setState({room: ''})
+			this.setState({caves: [...caves, response.data]})
+			this.setState({cave: {name:'',location:''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	handleDelete(id) {
-		const { rooms } = this.state
-		axios.delete(`https://localhost:5001/api/Room/${id}`).then(response => {
-			this.setState({rooms: rooms.filter(room => room.id !== id)})
+		const { caves } = this.state
+		axios.delete(`https://localhost:5001/api/caves/${id}`).then(response => {
+			this.setState({caves: caves.filter(Vendi => Vendi.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	render() {
-		const { room, rooms } = this.state
+		const { cave, caves } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add room type</h1>
+					<h1>Add cave</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Room type</Form.Label>
+							<Form.Label>Name</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Room type"
-								value={room}
-								onChange={e => this.setState({room: e.target.value})}
+								placeholder="Name"
+								value={cave.name}
+								onChange={e => this.setState({cave: {...cave, name: e.target.value}})}
+							/>
+						</Form.Group>
+
+            <Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>Location</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Location"
+								value={cave.location}
+								onChange={e => this.setState({cave: {...cave, location: e.target.value}})}
 							/>
 						</Form.Group>
 
 						<Button variant="primary" type="submit">
-							Save type
+							Save cave
 						</Button>
 					</Form>
 				</Col>
@@ -84,21 +98,23 @@ class RoomTypes extends React.Component {
 						<thead>
 							<tr>
 								<th>#</th>
-								<th>Type</th>
+								<th>Name</th>
+                <th>Location</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody>
 							{
-								rooms.map(room => <tr key={room.id}>
-									<td>{room.id}</td>
-									<td>{room.name}</td>
+								caves.map(cave => <tr key={cave.id}>
+									<td>{cave.id}</td>
+									<td>{cave.name}</td>
+									<td>{cave.location}</td>
 									<td><Button variant="warning">Edit</Button></td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(room.id)}
+											onClick={() => this.handleDelete(cave.id)}
 										>
 											Delete
 										</Button>
@@ -113,4 +129,4 @@ class RoomTypes extends React.Component {
 		)
 	}
 }
-export default RoomTypes;
+export default Caves;
