@@ -15,20 +15,23 @@ function App() {
             {/* <Nav.Link href="/home">Home</Nav.Link>
             <Nav.Link href="/about">About</Nav.Link> */}
             <Nav.Link href="/cities">Cities</Nav.Link>
+            <Nav.Link href="/menus">Menus</Nav.Link>
             <Nav.Link href="/restaurant-types">Restaurant Types</Nav.Link>
+            <Nav.Link href="/restaurants">Restaurants</Nav.Link>
             <Nav.Link href="/accommodation-types">Accommodation Types</Nav.Link>
             <Nav.Link href="/accommodation-facilities">Accommodation Facilities</Nav.Link>
             <Nav.Link href="/accommodations">Accommodations</Nav.Link>
-            <Nav.Link href="/menus">Menus</Nav.Link>
             <Nav.Link href="/rooms">Rooms</Nav.Link>
             <Nav.Link href="/places">Places</Nav.Link>
-            <Nav.Link href="/monuments">Monuments</Nav.Link>
+            <Nav.Link href="/monuments">Monuments</Nav.Link>    
             <Nav.Link href="/nature">Nature</Nav.Link>
+            <Nav.Link href="/business-types">Business Types</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
     </div>
   );
 }
+
 
 export default App;

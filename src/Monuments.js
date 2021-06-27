@@ -14,11 +14,14 @@ class Monuments extends React.Component {
 		  monument: {
         name: '',
         location: ''
-      }
+      },
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -60,8 +63,37 @@ class Monuments extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { monument, monuments, editId } = this.state
+		axios.put(`https://localhost:5001/api/monuments/${editId}`, {
+			id: editId,
+			name: monument.name,
+			location: monument.location
+		}).then(response => {
+			const idx = monuments.indexOf(monuments.find(monument => monument.id === editId))
+			this.state.monuments[idx].name = monument.name
+			this.state.monuments[idx].location = monument.location
+			this.setState({
+				editId: '',
+				monument: {
+					name: '',
+					location: ''
+				}
+			})
+		}).catch(error => {
+			console.log(error)
+		})
+	}
+
+	handleEditClick(id) {
+		const { monuments } = this.state
+		const editMonument = monuments.find(monument => monument.id === id)
+		this.setState({ monument: { name: editMonument.name, location: editMonument.location}, editId: id})
+	}
+
 	render() {
-		const { monument, monuments } = this.state
+		const { monument, monuments, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -88,9 +120,18 @@ class Monuments extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save monument
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit monument
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', monument: { name: '', location: ''}})}>New Monument</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save monument
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -110,7 +151,13 @@ class Monuments extends React.Component {
 									<td>{monument.id}</td>
 									<td>{monument.name}</td>
 									<td>{monument.location}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(monument.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

@@ -12,11 +12,14 @@ class AccommodationFacilities extends React.Component {
 		this.state = {
 		  facilities: [],
 			facility: '',
-			information: ''
+			information: '',
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -58,8 +61,35 @@ class AccommodationFacilities extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { facility, information, facilities, editId } = this.state
+		axios.put(`https://localhost:5001/api/accommodationfacilities/${editId}`, {
+			id: editId,
+			name: facility,
+			information
+		}).then(response => {
+			const idx = facilities.indexOf(facilities.find(facility => facility.id === editId))
+			this.state.facilities[idx].name = facility
+			this.state.facilities[idx].information = information
+			this.setState({
+				editId: '',
+				facility: '',
+				information: ''
+			})
+		}).catch(error => {
+			console.log(error.response.data)
+		})
+	}
+
+	handleEditClick(id) {
+		const { facilities } = this.state
+		const editFacility = facilities.find(facility => facility.id === id)
+		this.setState({facility: editFacility.name, information: editFacility.information, editId: id})
+	}s
+
 	render() {
-		const { facility, information, facilities } = this.state
+		const { facility, information, facilities, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -86,9 +116,18 @@ class AccommodationFacilities extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save facility
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit facility
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', facility: '', information: ''})}>New Facility</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save facility
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -108,7 +147,13 @@ class AccommodationFacilities extends React.Component {
 									<td>{facility.id}</td>
 									<td>{facility.name}</td>
 									<td>{facility.information}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(facility.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

@@ -6,21 +6,21 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 
-class Accommodations extends React.Component {
+class Restaurants extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  accommodations: [],
-			accommodation: {
+		  restaurants: [],
+			restaurant: {
         name: '',
         city: '',
         address: '',
         type: '',
-        facilities: []
+        menus: []
       },
       cities: [],
       types: [],
-      facilities: [],
+      menus: [],
 			editId: ''
 		}
 	
@@ -31,16 +31,16 @@ class Accommodations extends React.Component {
 	}
 
 	componentDidMount() {
-		this.fetchAccommodations()
+		this.fetchRestaurants()
     this.fetchTypes()
     this.fetchCities()
-    this.fetchFacilities()
+    this.fetchMenus()
 	}
 
-  fetchAccommodations() {
-    axios.get('https://localhost:5001/api/accommodations')
+  fetchRestaurants() {
+    axios.get('https://localhost:5001/api/restaurants')
 				 .then(response => {
-					 this.setState({accommodations: response.data})
+					 this.setState({restaurants: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -48,7 +48,7 @@ class Accommodations extends React.Component {
   }
 
   fetchTypes() {
-    axios.get('https://localhost:5001/api/accommodationtypes')
+    axios.get('https://localhost:5001/api/restauranttypes')
 				 .then(response => {
 					 this.setState({types: response.data})
 					 console.log(response)
@@ -67,10 +67,10 @@ class Accommodations extends React.Component {
 				 })
   }
 
-  fetchFacilities() {
-    axios.get('https://localhost:5001/api/accommodationfacilities')
+  fetchMenus() {
+    axios.get('https://localhost:5001/api/menus')
 				 .then(response => {
-					 this.setState({facilities: response.data})
+					 this.setState({menus: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -79,26 +79,27 @@ class Accommodations extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { accommodations } = this.state
-    const { name, city, address, type, facilities } = this.state.accommodation
+		const { restaurants } = this.state
+    const { name, city, address, type, menus } = this.state.restaurant
 		// if (!type) {
 		// 	alert("Please provide a type name!")
 		// 	return
 		// }
 
-		axios.post('https://localhost:5001/api/accommodations', {
+		axios.post('https://localhost:5001/api/restaurants', {
 			name,
       city,
       address,
       type,
-      facilities
+      menus
 		}).then(response => {
-			this.setState({accommodations: [...accommodations, response.data]})
-			this.setState({accommodation: {
+			this.setState({restaurants: [...restaurants, response.data]})
+			this.setState({restaurant: {
         name: '',
         city: '',
         address: '',
         type: '',
+        menus: []
       }})
 		}).catch(error => {
 			console.log(error)
@@ -106,9 +107,9 @@ class Accommodations extends React.Component {
 	}
 
 	handleDelete(id) {
-		const { accommodations } = this.state
-		axios.delete(`https://localhost:5001/api/accommodations/${id}`).then(response => {
-			this.setState({accommodations: accommodations.filter(accommodation => accommodation.id !== id)})
+		const { restaurants } = this.state
+		axios.delete(`https://localhost:5001/api/restaurants/${id}`).then(response => {
+			this.setState({restaurants: restaurants.filter(restaurant => restaurant.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -116,29 +117,29 @@ class Accommodations extends React.Component {
 
 	handleEditSubmit(e) {
 		e.preventDefault()
-		const { accommodation, accommodations, editId } = this.state
-		axios.put(`https://localhost:5001/api/accommodations/${editId}`, {
+		const { restaurant, restaurants, editId } = this.state
+		axios.put(`https://localhost:5001/api/restaurants/${editId}`, {
 			id: editId,
-			name: accommodation.name,
-			city: accommodation.city,
-			address: accommodation.address,
-			type: accommodation.type,
-			facilities: accommodation.facilities
+			name: restaurant.name,
+			city: restaurant.city,
+			address: restaurant.address,
+			type: restaurant.type,
+			menus: restaurant.menus
 		}).then(response => {
-			const idx = accommodations.indexOf(accommodations.find(accommodation => accommodation.id === editId))
-			this.state.accommodations[idx].name = accommodation.name
-			this.state.accommodations[idx].city = accommodation.city
-			this.state.accommodations[idx].address = accommodation.address
-			this.state.accommodations[idx].type = accommodation.type
-			this.state.accommodations[idx].facilities = accommodation.facilities
+			const idx = restaurants.indexOf(restaurants.find(restaurant => restaurant.id === editId))
+			this.state.restaurant[idx].name = restaurant.name
+			this.state.restaurant[idx].city = restaurant.city
+			this.state.restaurant[idx].address = restaurant.address
+			this.state.restaurant[idx].type = restaurant.type
+			this.state.restaurant[idx].menus = restaurant.menus
 			this.setState({
 				editId: '',
-				accommodation: {
+				restaurant: {
 					name: '',
 					city: '',
 					address: '',
 					type: '',
-					facilities: []
+					menus: []
 				}
 			})
 		}).catch(error => {
@@ -147,38 +148,38 @@ class Accommodations extends React.Component {
 	}
 
 	handleEditClick(id) {
-		const { accommodations } = this.state
-		const editAccommodation = accommodations.find(accommodation => accommodation.id === id)
+		const { restaurants } = this.state
+		const editRestaurant = restaurants.find(restaurant => restaurant.id === id)
 		this.setState({
-			accommodation: {
-				name: editAccommodation.name,
-				city: editAccommodation.city,
-				address: editAccommodation.address,
-				type: editAccommodation.type,
-				facilities: editAccommodation.facilities
+			restaurant: {
+				name: editRestaurant.name,
+				city: editRestaurant.city,
+				address: editRestaurant.address,
+				type: editRestaurant.type,
+				menus: editRestaurant.menus
 			}, 
 			editId: id
 		})
 	}
 
 	render() {
-		const { accommodation, accommodations, editId } = this.state
-		const { cities, types, facilities } = this.state
+		const { restaurant, restaurants, editId } = this.state
+		const { cities, types, menus } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add accommodation</h1>
+					<h1>Add restaurant</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
 							<Form.Label>Name</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder="Name"
-								value={accommodation.name}
+								value={restaurant.name}
 								onChange={e => this.setState({
-                  accommodation: {
-                    ...accommodation,
+                  restaurant: {
+                    ...restaurant,
                     name: e.target.value
                   }
                 })}
@@ -190,10 +191,10 @@ class Accommodations extends React.Component {
 							<Form.Control
 								as="select"
 								placeholder="City"
-								value={accommodation.city}
+								value={restaurant.city}
 								onChange={e => this.setState({
-                  accommodation: {
-                    ...accommodation,
+                  restaurant: {
+                    ...restaurant,
                     city: e.target.value
                   }
                 })}
@@ -214,10 +215,10 @@ class Accommodations extends React.Component {
 							<Form.Control
 								type="text"
 								placeholder="Address"
-								value={accommodation.address}
+								value={restaurant.address}
 								onChange={e => this.setState({
-                  accommodation: {
-                    ...accommodation,
+                  restaurant: {
+                    ...restaurant,
                     address: e.target.value
                   }
                 })}
@@ -225,14 +226,14 @@ class Accommodations extends React.Component {
 						</Form.Group>
 
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Accommodation type</Form.Label>
+							<Form.Label>Restaurant type</Form.Label>
 							<Form.Control
 								as="select"
 								placeholder="Type"
-								value={accommodation.type}
+								value={restaurant.type}
 								onChange={e => this.setState({
-                  accommodation: {
-                    ...accommodation,
+                  restaurant: {
+                    ...restaurant,
                     type: e.target.value
                   }
                 })}
@@ -249,22 +250,22 @@ class Accommodations extends React.Component {
 						</Form.Group>
 
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Accommodation facilities</Form.Label>
+							<Form.Label>Restaurant menus</Form.Label>
 							<Form.Control
 								as="select"
 								placeholder="Facilities"
 								multiple
 								onChange={e => this.setState({
-                  accommodation: {
-                    ...accommodation,
-                    facilities: [].slice.call(e.target.selectedOptions).map(it=>it.value)
+                  restaurant: {
+                    ...restaurant,
+                    menus: [].slice.call(e.target.selectedOptions).map(it=>it.value)
                   }
                 })}
 							>
 								{
-									facilities.map(facility =>
-										<option key={facility.id} value={facility.name}>
-											{facility.name}
+									menus.map(menu =>
+										<option key={menu.id} value={menu.name}>
+											{menu.name}
 										</option>
 									)
 								}
@@ -275,12 +276,12 @@ class Accommodations extends React.Component {
 							editId ?
 							<div>
 								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
-									Edit accommodation
+									Edit restaurant
 								</Button>
-								<Button variant="primary" onClick={() => this.setState({editId: '', accommodation: { name: '', city: '', address: '', type: '', facilities: []}})}>New Accommodation</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', restaurant: { name: '', city: '', address: '', type: '', menus: []}})}>New Restaurant</Button>
 							</div> :
 							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
-								Save accommodation
+								Save restaurant
 							</Button>
 						}
 					</Form>
@@ -294,31 +295,31 @@ class Accommodations extends React.Component {
                 <th>City</th>
                 <th>Address</th>
                 <th>Type</th>
-                <th>Facilities</th>
+                <th>Menus</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody>
 							{
-								accommodations.map(acc => <tr key={acc.id}>
-									<td>{acc.id}</td>
-									<td>{acc.name}</td>
-                  <td>{acc.city}</td>
-                  <td>{acc.address}</td>
-                  <td>{acc.type}</td>
-                  <td>{acc.facilities}</td>
+								restaurants.map(rest => <tr key={rest.id}>
+									<td>{rest.id}</td>
+									<td>{rest.name}</td>
+                  <td>{rest.city}</td>
+                  <td>{rest.address}</td>
+                  <td>{rest.type}</td>
+                  <td>{(rest.menus || []).join(', ')}</td>
 									<td>
 										<Button
 											variant="warning"
-											onClick={() => this.handleEditClick(acc.id)}>
+											onClick={() => this.handleEditClick(rest.id)}>
 											Edit
 										</Button>
 									</td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(acc.id)}
+											onClick={() => this.handleDelete(rest.id)}
 										>
 											Delete
 										</Button>
@@ -333,4 +334,4 @@ class Accommodations extends React.Component {
 		)
 	}
 }
-export default Accommodations;
+export default Restaurants;

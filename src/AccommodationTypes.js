@@ -11,11 +11,14 @@ class AccommodationTypes extends React.Component {
 		super(props);
 		this.state = {
 		  types: [],
-			type: ''
+			type: '',
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -56,8 +59,32 @@ class AccommodationTypes extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { type, types, editId } = this.state
+		axios.put(`https://localhost:5001/api/accommodationtypes/${editId}`, {
+			id: editId,
+			name: type
+		}).then(response => {
+			const idx = types.indexOf(types.find(type => type.id === editId))
+			this.state.types[idx].name = type
+			this.setState({
+				editId: '',
+				type: ''
+			})
+		}).catch(error => {
+			console.log(error.response.data)
+		})
+	}
+
+	handleEditClick(id) {
+		const { types } = this.state
+		const editType = types.find(type => type.id === id)
+		this.setState({type: editType.name, editId: id})
+	}
+
 	render() {
-		const { type, types } = this.state
+		const { type, types, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -74,9 +101,18 @@ class AccommodationTypes extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save type
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit type
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', type: ''})}>New Type</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save type
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -94,7 +130,13 @@ class AccommodationTypes extends React.Component {
 								types.map(type => <tr key={type.id}>
 									<td>{type.id}</td>
 									<td>{type.name}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(type.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

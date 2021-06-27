@@ -6,12 +6,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios'
 
-class RoomTypes extends React.Component {
+class BusinessTypes extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  rooms: [],
-			room: '',
+		  businesses: [],
+			business: '',
 			editId: ''
 		}
 	
@@ -22,9 +22,9 @@ class RoomTypes extends React.Component {
 	}
 
 	componentDidMount() {
-		axios.get('https://localhost:5001/api/Room')
+		axios.get('https://localhost:5001/api/businesstypes')
 				 .then(response => {
-					 this.setState({rooms: response.data})
+					 this.setState({businesses: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -33,27 +33,27 @@ class RoomTypes extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { room, rooms } = this.state
+		const { business, businesses } = this.state
 
-		if (!room) {
+		if (!business) {
 			alert("Please provide a type name!")
 			return
 		}
 
-		axios.post('https://localhost:5001/api/Room', {
-			name: room
+		axios.post('https://localhost:5001/api/businesstypes', {
+			name: business
 		}).then(response => {
-			this.setState({rooms: [...rooms, response.data]})
-			this.setState({room: ''})
+			this.setState({businesses: [...businesses, response.data]})
+			this.setState({business: ''})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
 	}
 
 	handleDelete(id) {
-		const { rooms } = this.state
-		axios.delete(`https://localhost:5001/api/Room/${id}`).then(response => {
-			this.setState({rooms: rooms.filter(room => room.id !== id)})
+		const { businesses } = this.state
+		axios.delete(`https://localhost:5001/api/businesstypes/${id}`).then(response => {
+			this.setState({businesses: businesses.filter(business => business.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -61,16 +61,16 @@ class RoomTypes extends React.Component {
 
 	handleEditSubmit(e) {
 		e.preventDefault()
-		const { room, rooms, editId } = this.state
-		axios.put(`https://localhost:5001/api/room/${editId}`, {
+		const { business, businesses, editId } = this.state
+		axios.put(`https://localhost:5001/api/businesstypes/${editId}`, {
 			id: editId,
-			name: room
+			name: business
 		}).then(response => {
-			const idx = rooms.indexOf(rooms.find(room => room.id === editId))
-			this.state.rooms[idx].name = room
+			const idx = businesses.indexOf(businesses.find(business => business.id === editId))
+			this.state.businesses[idx].name = business
 			this.setState({
 				editId: '',
-				room: ''
+				business: ''
 			})
 		}).catch(error => {
 			console.log(error.response.data)
@@ -78,26 +78,26 @@ class RoomTypes extends React.Component {
 	}
 
 	handleEditClick(id) {
-		const { rooms } = this.state
-		const editRoom = rooms.find(room => room.id === id)
-		this.setState({room: editRoom.name, editId: id})
+		const { businesses } = this.state
+		const editBusiness = businesses.find(business => business.id === id)
+		this.setState({business: editBusiness.name, editId: id})
 	}
 
 	render() {
-		const { room, rooms, editId } = this.state
+		const { business, businesses, editId } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add room type</h1>
+					<h1>Add business type</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Room type</Form.Label>
+							<Form.Label>Business type</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Room type"
-								value={room}
-								onChange={e => this.setState({room: e.target.value})}
+								placeholder="Business type"
+								value={business}
+								onChange={e => this.setState({business: e.target.value})}
 							/>
 						</Form.Group>
 
@@ -107,7 +107,7 @@ class RoomTypes extends React.Component {
 								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
 									Edit type
 								</Button>
-								<Button variant="primary" onClick={() => this.setState({editId: '', room: ''})}>New Type</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', business: ''})}>New Type</Button>
 							</div> :
 							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
 								Save type
@@ -127,20 +127,20 @@ class RoomTypes extends React.Component {
 						</thead>
 						<tbody>
 							{
-								rooms.map(room => <tr key={room.id}>
-									<td>{room.id}</td>
-									<td>{room.name}</td>
+								businesses.map(business => <tr key={business.id}>
+									<td>{business.id}</td>
+									<td>{business.name}</td>
 									<td>
 										<Button
 											variant="warning"
-											onClick={() => this.handleEditClick(room.id)}>
+											onClick={() => this.handleEditClick(business.id)}>
 											Edit
 										</Button>
 									</td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(room.id)}
+											onClick={() => this.handleDelete(business.id)}
 										>
 											Delete
 										</Button>
@@ -155,4 +155,4 @@ class RoomTypes extends React.Component {
 		)
 	}
 }
-export default RoomTypes;
+export default BusinessTypes;

@@ -14,11 +14,14 @@ class VendetTuristike extends React.Component {
 		  Vendi: {
               name: '',
               location: ''
-          }
+          },
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -60,8 +63,37 @@ class VendetTuristike extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { Vendi, VendetTuristike, editId } = this.state
+		axios.put(`https://localhost:5001/api/VendetTuristike/${editId}`, {
+			id: editId,
+			name: Vendi.name,
+			location: Vendi.location
+		}).then(response => {
+			const idx = VendetTuristike.indexOf(VendetTuristike.find(Vendi => Vendi.id === editId))
+			this.state.VendetTuristike[idx].name = Vendi.name
+			this.state.VendetTuristike[idx].location = Vendi.location
+			this.setState({
+				editId: '',
+				Vendi: {
+					name: '',
+					location: ''
+				}
+			})
+		}).catch(error => {
+			console.log(error)
+		})
+	}
+
+	handleEditClick(id) {
+		const { VendetTuristike } = this.state
+		const editVendi = VendetTuristike.find(Vendi => Vendi.id === id)
+		this.setState({ Vendi: { name: editVendi.name, location: editVendi.location}, editId: id})
+	}
+
 	render() {
-		const { Vendi, VendetTuristike } = this.state
+		const { Vendi, VendetTuristike, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -88,9 +120,18 @@ class VendetTuristike extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save place
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit place
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', Vendi: { name: '', location: ''}})}>New Place</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save place
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -110,7 +151,13 @@ class VendetTuristike extends React.Component {
 									<td>{vendi.id}</td>
 									<td>{vendi.name}</td>
 									<td>{vendi.location}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(vendi.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

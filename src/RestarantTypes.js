@@ -11,11 +11,14 @@ class RestaurantTypes extends React.Component {
 		super(props);
 		this.state = {
 		  restaurants: [],
-			restaurant: ''
+			restaurant: '',
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -56,8 +59,32 @@ class RestaurantTypes extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { restaurant, restaurants, editId } = this.state
+		axios.put(`https://localhost:5001/api/restauranttypes/${editId}`, {
+			id: editId,
+			name: restaurant
+		}).then(response => {
+			const idx = restaurants.indexOf(restaurants.find(restaurant => restaurant.id === editId))
+			this.state.restaurants[idx].name = restaurant
+			this.setState({
+				editId: '',
+				restaurant: ''
+			})
+		}).catch(error => {
+			console.log(error.response.data)
+		})
+	}
+
+	handleEditClick(id) {
+		const { restaurants } = this.state
+		const editRestaurant = restaurants.find(restaurant => restaurant.id === id)
+		this.setState({restaurant: editRestaurant.name, editId: id})
+	}
+
 	render() {
-		const { restaurant, restaurants } = this.state
+		const { restaurant, restaurants, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -74,9 +101,18 @@ class RestaurantTypes extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save type
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit type
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', restaurant: ''})}>New Type</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save type
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -94,7 +130,13 @@ class RestaurantTypes extends React.Component {
 								restaurants.map(restaurant => <tr key={restaurant.id}>
 									<td>{restaurant.id}</td>
 									<td>{restaurant.name}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(restaurant.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

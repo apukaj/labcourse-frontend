@@ -14,11 +14,14 @@ class Caves extends React.Component {
 		  cave: {
         name: '',
         location: ''
-      }
+      },
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -60,8 +63,37 @@ class Caves extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { cave, caves, editId } = this.state
+		axios.put(`https://localhost:5001/api/caves/${editId}`, {
+			id: editId,
+			name: cave.name,
+			location: cave.location
+		}).then(response => {
+			const idx = caves.indexOf(caves.find(cave => cave.id === editId))
+			this.state.caves[idx].name = cave.name
+			this.state.caves[idx].location = cave.location
+			this.setState({
+				editId: '',
+				cave: {
+					name: '',
+					location: ''
+				}
+			})
+		}).catch(error => {
+			console.log(error)
+		})
+	}
+
+	handleEditClick(id) {
+		const { caves } = this.state
+		const editCave = caves.find(cave => cave.id === id)
+		this.setState({ cave: { name: editCave.name, location: editCave.location}, editId: id})
+	}
+
 	render() {
-		const { cave, caves } = this.state
+		const { cave, caves,editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -88,9 +120,18 @@ class Caves extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save cave
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit cave
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', cave: { name: '', location: ''}})}>New Cave</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save cave
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -110,7 +151,13 @@ class Caves extends React.Component {
 									<td>{cave.id}</td>
 									<td>{cave.name}</td>
 									<td>{cave.location}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(cave.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

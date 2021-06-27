@@ -11,11 +11,14 @@ class Menus extends React.Component {
 		super(props);
 		this.state = {
 		  menus: [],
-			menu: ''
+			menu: '',
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -56,8 +59,32 @@ class Menus extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { menu, menus, editId } = this.state
+		axios.put(`https://localhost:5001/api/menus/${editId}`, {
+			id: editId,
+			name: menu
+		}).then(response => {
+			const idx = menus.indexOf(menus.find(menu => menu.id === editId))
+			this.state.menus[idx].name = menu
+			this.setState({
+				editId: '',
+				menu: ''
+			})
+		}).catch(error => {
+			console.log(error.response.data)
+		})
+	}
+
+	handleEditClick(id) {
+		const { menus } = this.state
+		const editMenu = menus.find(menu => menu.id === id)
+		this.setState({menu: editMenu.name, editId: id})
+	}
+
 	render() {
-		const { menu, menus } = this.state
+		const { menu, menus, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -74,9 +101,18 @@ class Menus extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save menu
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit menu
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', menu: ''})}>New Menu</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save menu
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -94,7 +130,13 @@ class Menus extends React.Component {
 								menus.map(menu => <tr key={menu.id}>
 									<td>{menu.id}</td>
 									<td>{menu.name}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(menu.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"

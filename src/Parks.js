@@ -14,11 +14,14 @@ class Parks extends React.Component {
 		  park: {
         name: '',
         location: ''
-      }
+      },
+			editId: ''
 		}
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleDelete = this.handleDelete.bind(this)
+		this.handleEditSubmit = this.handleEditSubmit.bind(this)
+		this.handleEditClick = this.handleEditClick.bind(this)
 	}
 
 	componentDidMount() {
@@ -60,8 +63,37 @@ class Parks extends React.Component {
 		})
 	}
 
+	handleEditSubmit(e) {
+		e.preventDefault()
+		const { park, parks, editId } = this.state
+		axios.put(`https://localhost:5001/api/parks/${editId}`, {
+			id: editId,
+			name: park.name,
+			location: park.location
+		}).then(response => {
+			const idx = parks.indexOf(parks.find(park => park.id === editId))
+			this.state.parks[idx].name = park.name
+			this.state.parks[idx].location = park.location
+			this.setState({
+				editId: '',
+				park: {
+					name: '',
+					location: ''
+				}
+			})
+		}).catch(error => {
+			console.log(error)
+		})
+	}
+
+	handleEditClick(id) {
+		const { parks } = this.state
+		const editPark = parks.find(park => park.id === id)
+		this.setState({ park: { name: editPark.name, location: editPark.location}, editId: id})
+	}
+
 	render() {
-		const { park, parks } = this.state
+		const { park, parks, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -88,9 +120,18 @@ class Parks extends React.Component {
 							/>
 						</Form.Group>
 
-						<Button variant="primary" type="submit">
-							Save park
-						</Button>
+						{
+							editId ?
+							<div>
+								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
+									Edit park
+								</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', park: { name: '', location: ''}})}>New Park</Button>
+							</div> :
+							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
+								Save park
+							</Button>
+						}
 					</Form>
 				</Col>
 				<Col>
@@ -110,7 +151,13 @@ class Parks extends React.Component {
 									<td>{park.id}</td>
 									<td>{park.name}</td>
 									<td>{park.location}</td>
-									<td><Button variant="warning">Edit</Button></td>
+									<td>
+										<Button
+											variant="warning"
+											onClick={() => this.handleEditClick(park.id)}>
+											Edit
+										</Button>
+									</td>
 									<td>
 										<Button
 											variant="danger"
