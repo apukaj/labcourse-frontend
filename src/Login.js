@@ -15,6 +15,12 @@ class Login extends React.Component {
 	
 		this.handleSubmit = this.handleSubmit.bind(this)
 	}
+
+	componentDidMount() {
+		if (localStorage.getItem("token")) {
+			window.location = "/admin/cities"
+		}
+	}
 	
 	handleSubmit(e) {
 		e.preventDefault()
@@ -39,7 +45,7 @@ class Login extends React.Component {
 		}).then(response => {
 			localStorage.setItem("token", response.data.token)
 			localStorage.setItem("email", email)
-			this.props.history.push("home")
+			window.location = "/admin/cities"
 			console.log(response.data)
 		}).catch(error => {
 			alert("We couldn't log you in with the provided credentials!")
@@ -76,7 +82,8 @@ class Login extends React.Component {
 						</Form.Group>
 						<Button variant="primary" type="submit">
 							Login
-						</Button>
+						</Button><br></br>
+						<a href="/register">Register</a>
 						</Form>
 				</Card.Body>
 			</Card>

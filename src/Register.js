@@ -11,6 +11,7 @@ class Register extends React.Component {
     super(props);
     this.state = {
       email: '',
+      username: '',
       password: '',
       confirmPassword: '',
       tosAgree: false
@@ -22,10 +23,15 @@ class Register extends React.Component {
   handleSubmit(e) {
     e.preventDefault()
     
-    const { email, password, confirmPassword, tosAgree } = this.state
+    const { email, username, password, confirmPassword, tosAgree } = this.state
 
     if (!email) {
       alert("Please provide an email address!")
+      return
+    }
+
+    if (!username) {
+      alert("Please provide a username!")
       return
     }
 
@@ -43,11 +49,12 @@ class Register extends React.Component {
 
     axios.post('https://localhost:5001/api/identity/register', {
       email,
+      username,
       password
     }).then(response => {
       localStorage.setItem("token", response.data.token)
       localStorage.setItem("email", email)
-      this.props.history.push("home")
+      window.location = "/admin/cities"
       console.log(response.data)
     }).catch(error => {
       console.log(error.response.data.errors)
@@ -67,6 +74,15 @@ class Register extends React.Component {
                 type="email"
                 placeholder="Enter email"
                 onChange={e => this.setState({email: e.target.value})} 
+              />
+            </Form.Group>
+
+            <Form.Group controlId="username" style={{ marginBottom: 15 }}>
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Username" 
+                onChange={e => this.setState({username: e.target.value})}  
               />
             </Form.Group>
 

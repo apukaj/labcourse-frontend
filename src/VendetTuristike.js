@@ -13,8 +13,11 @@ class VendetTuristike extends React.Component {
 		  VendetTuristike: [],
 		  Vendi: {
               name: '',
-              location: ''
+							city: '',
+              address: '',
+							image: ''
           },
+			cities: [],
 			editId: ''
 		}
 	
@@ -32,6 +35,14 @@ class VendetTuristike extends React.Component {
 				 }).catch(error => {
 					 console.log(error.response.data)
 				 })
+
+		axios.get('https://localhost:5001/api/cities')
+				 .then(response => {
+					 this.setState({cities: response.data})
+					 console.log(response)
+				 }).catch(error => {
+				 	 console.log(error)
+				 })
 	}
 
 	handleSubmit(e) {
@@ -45,10 +56,12 @@ class VendetTuristike extends React.Component {
 
 		axios.post('https://localhost:5001/api/VendetTuristike', {
 			name: Vendi.name,
-            location: Vendi.location
+			city: Vendi.city,
+			address: Vendi.address,
+			image: Vendi.image
 		}).then(response => {
 			this.setState({VendetTuristike: [...VendetTuristike, response.data]})
-			this.setState({Vendi: {name:'',location:''}})
+			this.setState({Vendi: {name:'', city:'', address:'',image:''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -69,16 +82,22 @@ class VendetTuristike extends React.Component {
 		axios.put(`https://localhost:5001/api/VendetTuristike/${editId}`, {
 			id: editId,
 			name: Vendi.name,
-			location: Vendi.location
+			city: Vendi.city,
+			address: Vendi.address,
+			image: Vendi.image
 		}).then(response => {
 			const idx = VendetTuristike.indexOf(VendetTuristike.find(Vendi => Vendi.id === editId))
 			this.state.VendetTuristike[idx].name = Vendi.name
-			this.state.VendetTuristike[idx].location = Vendi.location
+			this.state.VendetTuristike[idx].city = Vendi.city
+			this.state.VendetTuristike[idx].address = Vendi.address
+			this.state.VendetTuristike[idx].image = Vendi.image
 			this.setState({
 				editId: '',
 				Vendi: {
 					name: '',
-					location: ''
+					city: '',
+					address: '',
+					image: ''
 				}
 			})
 		}).catch(error => {
@@ -89,11 +108,11 @@ class VendetTuristike extends React.Component {
 	handleEditClick(id) {
 		const { VendetTuristike } = this.state
 		const editVendi = VendetTuristike.find(Vendi => Vendi.id === id)
-		this.setState({ Vendi: { name: editVendi.name, location: editVendi.location}, editId: id})
+		this.setState({ Vendi: { name: editVendi.name, city: editVendi.city, address: editVendi.address, image: editVendi.image }, editId: id})
 	}
 
 	render() {
-		const { Vendi, VendetTuristike, editId } = this.state
+		const { Vendi, VendetTuristike, cities, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -110,13 +129,47 @@ class VendetTuristike extends React.Component {
 							/>
 						</Form.Group>
 
-                        <Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Location</Form.Label>
+						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>City</Form.Label>
+							<Form.Control
+								as="select"
+								placeholder="City"
+								value={Vendi.city}
+								onChange={e => this.setState({
+                  Vendi: {
+                    ...Vendi,
+                    city: e.target.value
+                  }
+                })}
+							>
+								<option value="" defaultValue>Select</option>
+								{
+									cities.map(city => 
+										<option key={city.id} value={city.name}>
+											{city.name}
+										</option>
+									)
+								}
+							</Form.Control>
+						</Form.Group>
+
+						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>Address</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Location"
-								value={Vendi.location}
-								onChange={e => this.setState({Vendi: {...Vendi, location: e.target.value}})}
+								placeholder="Address"
+								value={Vendi.address}
+								onChange={e => this.setState({Vendi: {...Vendi, address: e.target.value}})}
+							/>
+						</Form.Group>
+
+						<Form.Group controlId="image" style={{ marginBottom: 15 }}>
+							<Form.Label>Image</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Image url"
+								value={Vendi.image}
+								onChange={e => this.setState({Vendi: {...Vendi, image: e.target.value}})}
 							/>
 						</Form.Group>
 
@@ -140,7 +193,9 @@ class VendetTuristike extends React.Component {
 							<tr>
 								<th>#</th>
 								<th>Name</th>
-                                <th>Location</th>
+								<th>City</th>
+								<th>Address</th>
+								<th>Image</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
@@ -150,7 +205,13 @@ class VendetTuristike extends React.Component {
 								VendetTuristike.map(vendi => <tr key={vendi.id}>
 									<td>{vendi.id}</td>
 									<td>{vendi.name}</td>
-									<td>{vendi.location}</td>
+									<td>{vendi.city}</td>
+									<td>{vendi.address}</td>
+									<td>
+										<a href={vendi.image} target="_blank">
+											<img height={80} src={vendi.image} />
+										</a>
+									</td>
 									<td>
 										<Button
 											variant="warning"

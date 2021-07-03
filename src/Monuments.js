@@ -13,8 +13,11 @@ class Monuments extends React.Component {
 		  monuments: [],
 		  monument: {
         name: '',
-        location: ''
+				city: '',
+        address: '',
+				image: ''
       },
+			cities: [],
 			editId: ''
 		}
 	
@@ -32,6 +35,14 @@ class Monuments extends React.Component {
 				 }).catch(error => {
 					 console.log(error.response.data)
 				 })
+
+		axios.get('https://localhost:5001/api/cities')
+				 .then(response => {
+					 this.setState({cities: response.data})
+					 console.log(response)
+				 }).catch(error => {
+					 console.log(error)
+				 })
 	}
 
 	handleSubmit(e) {
@@ -45,10 +56,12 @@ class Monuments extends React.Component {
 
 		axios.post('https://localhost:5001/api/monuments', {
 			name: monument.name,
-      location: monument.location
+			city: monument.city,
+      address: monument.address,
+			image: monument.image
 		}).then(response => {
 			this.setState({monuments: [...monuments, response.data]})
-			this.setState({monument: {name:'',location:''}})
+			this.setState({monument: {name:'',city:'',address:'',image:''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -69,16 +82,22 @@ class Monuments extends React.Component {
 		axios.put(`https://localhost:5001/api/monuments/${editId}`, {
 			id: editId,
 			name: monument.name,
-			location: monument.location
+			city: monument.city,
+			address: monument.address,
+			image: monument.image
 		}).then(response => {
 			const idx = monuments.indexOf(monuments.find(monument => monument.id === editId))
 			this.state.monuments[idx].name = monument.name
-			this.state.monuments[idx].location = monument.location
+			this.state.monuments[idx].city = monument.city
+			this.state.monuments[idx].address = monument.address
+			this.state.monuments[idx].image = monument.image
 			this.setState({
 				editId: '',
 				monument: {
 					name: '',
-					location: ''
+					city: '',
+					address: '',
+					image: ''
 				}
 			})
 		}).catch(error => {
@@ -89,11 +108,11 @@ class Monuments extends React.Component {
 	handleEditClick(id) {
 		const { monuments } = this.state
 		const editMonument = monuments.find(monument => monument.id === id)
-		this.setState({ monument: { name: editMonument.name, location: editMonument.location}, editId: id})
+		this.setState({ monument: { name: editMonument.name, city: editMonument.city, address: editMonument.address, image: editMonument.image }, editId: id})
 	}
 
 	render() {
-		const { monument, monuments, editId } = this.state
+		const { monument, monuments, cities, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -110,13 +129,47 @@ class Monuments extends React.Component {
 							/>
 						</Form.Group>
 
+						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>City</Form.Label>
+							<Form.Control
+								as="select"
+								placeholder="City"
+								value={monument.city}
+								onChange={e => this.setState({
+                  monument: {
+                    ...monument,
+                    city: e.target.value
+                  }
+                })}
+							>
+								<option value="" defaultValue>Select</option>
+								{
+									cities.map(city => 
+										<option key={city.id} value={city.name}>
+											{city.name}
+										</option>
+									)
+								}
+							</Form.Control>
+						</Form.Group>
+
             <Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Location</Form.Label>
+							<Form.Label>Address</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Location"
-								value={monument.location}
-								onChange={e => this.setState({monument: {...monument, location: e.target.value}})}
+								placeholder="Address"
+								value={monument.address}
+								onChange={e => this.setState({monument: {...monument, address: e.target.value}})}
+							/>
+						</Form.Group>
+
+						<Form.Group controlId="image" style={{ marginBottom: 15 }}>
+							<Form.Label>Image</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Image url"
+								value={monument.image}
+								onChange={e => this.setState({monument: {...monument, image: e.target.value}})}
 							/>
 						</Form.Group>
 
@@ -140,7 +193,9 @@ class Monuments extends React.Component {
 							<tr>
 								<th>#</th>
 								<th>Name</th>
-                <th>Location</th>
+								<th>City</th>
+                <th>Address</th>
+								<th>Image</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
@@ -150,7 +205,13 @@ class Monuments extends React.Component {
 								monuments.map(monument => <tr key={monument.id}>
 									<td>{monument.id}</td>
 									<td>{monument.name}</td>
-									<td>{monument.location}</td>
+									<td>{monument.city}</td>
+									<td>{monument.address}</td>
+									<td>
+										<a href={monument.image} target="_blank">
+											<img height={80} src={monument.image} />
+										</a>
+									</td>
 									<td>
 										<Button
 											variant="warning"

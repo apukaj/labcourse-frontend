@@ -36,3 +36,37 @@
     transform: rotate(360deg);
   }
 }
+
+.card-img-top {
+  aspect-ratio: 16/9;
+}
+
+.places-header {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.visitors-container {
+  background-color: #b3cbd8;
+  text-align: center;
+  padding-bottom: 100px;
+}
+
+.visitors-container .card {
+  background: #b3cbd8;
+  text-align: left;;
+}
+
+.visitors-container .card-link {
+  color: black;
+}
+
+.home-hero {
+  padding-top: 250px;
+  height: 100vh;
+  background-image: url('http://localhost:3000/background.jpg');
+}
+
+.visitor-navigation {
+  background-color: #b3cbd8;
+}

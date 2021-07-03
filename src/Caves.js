@@ -13,8 +13,11 @@ class Caves extends React.Component {
 		  caves: [],
 		  cave: {
         name: '',
-        location: ''
+				city: '',
+        address: '',
+				image: ''
       },
+			cities: [],
 			editId: ''
 		}
 	
@@ -32,6 +35,14 @@ class Caves extends React.Component {
 				 }).catch(error => {
 					 console.log(error.response.data)
 				 })
+
+		axios.get('https://localhost:5001/api/cities')
+				 .then(response => {
+					 this.setState({cities: response.data})
+					 console.log(response)
+				 }).catch(error => {
+				 	 console.log(error)
+				 })
 	}
 
 	handleSubmit(e) {
@@ -45,10 +56,12 @@ class Caves extends React.Component {
 
 		axios.post('https://localhost:5001/api/caves', {
 			name: cave.name,
-      location: cave.location
+			city: cave.city,
+      address: cave.address,
+			image: cave.image
 		}).then(response => {
 			this.setState({caves: [...caves, response.data]})
-			this.setState({cave: {name:'',location:''}})
+			this.setState({cave: {name:'',city:'',address:'', image: ''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -69,16 +82,22 @@ class Caves extends React.Component {
 		axios.put(`https://localhost:5001/api/caves/${editId}`, {
 			id: editId,
 			name: cave.name,
-			location: cave.location
+			city: cave.city,
+			address: cave.address,
+			image: cave.image
 		}).then(response => {
 			const idx = caves.indexOf(caves.find(cave => cave.id === editId))
 			this.state.caves[idx].name = cave.name
-			this.state.caves[idx].location = cave.location
+			this.state.caves[idx].city = cave.city
+			this.state.caves[idx].address = cave.address
+			this.state.caves[idx].image = cave.image
 			this.setState({
 				editId: '',
 				cave: {
 					name: '',
-					location: ''
+					city: '',
+					address: '',
+					image: ''
 				}
 			})
 		}).catch(error => {
@@ -89,11 +108,11 @@ class Caves extends React.Component {
 	handleEditClick(id) {
 		const { caves } = this.state
 		const editCave = caves.find(cave => cave.id === id)
-		this.setState({ cave: { name: editCave.name, location: editCave.location}, editId: id})
+		this.setState({ cave: { name: editCave.name, city: editCave.city, address: editCave.address, image: editCave.image }, editId: id})
 	}
 
 	render() {
-		const { cave, caves,editId } = this.state
+		const { cave, caves, cities, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -110,13 +129,52 @@ class Caves extends React.Component {
 							/>
 						</Form.Group>
 
+						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>City</Form.Label>
+							<Form.Control
+								as="select"
+								placeholder="City"
+								value={cave.city}
+								onChange={e => this.setState({
+                  cave: {
+                    ...cave,
+                    city: e.target.value
+                  }
+                })}
+							>
+								<option value="" defaultValue>Select</option>
+								{
+									cities.map(city => 
+										<option key={city.id} value={city.name}>
+											{city.name}
+										</option>
+									)
+								}
+							</Form.Control>
+						</Form.Group>
+
             <Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Location</Form.Label>
+							<Form.Label>Address</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Location"
-								value={cave.location}
-								onChange={e => this.setState({cave: {...cave, location: e.target.value}})}
+								placeholder="Address"
+								value={cave.address}
+								onChange={e => this.setState({cave: {...cave, address: e.target.value}})}
+							/>
+						</Form.Group>
+
+						<Form.Group controlId="image" style={{ marginBottom: 15 }}>
+							<Form.Label>Image</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Image url"
+								value={cave.image}
+								onChange={e => this.setState({
+                  cave: {
+                    ...cave,
+                    image: e.target.value
+                  }
+                })}
 							/>
 						</Form.Group>
 
@@ -126,7 +184,7 @@ class Caves extends React.Component {
 								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
 									Edit cave
 								</Button>
-								<Button variant="primary" onClick={() => this.setState({editId: '', cave: { name: '', location: ''}})}>New Cave</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', cave: { name: '', address: ''}})}>New Cave</Button>
 							</div> :
 							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
 								Save cave
@@ -140,7 +198,9 @@ class Caves extends React.Component {
 							<tr>
 								<th>#</th>
 								<th>Name</th>
-                <th>Location</th>
+								<th>City</th>
+                <th>Address</th>
+								<th>Image</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
@@ -150,7 +210,13 @@ class Caves extends React.Component {
 								caves.map(cave => <tr key={cave.id}>
 									<td>{cave.id}</td>
 									<td>{cave.name}</td>
-									<td>{cave.location}</td>
+									<td>{cave.city}</td>
+									<td>{cave.address}</td>
+									<td>
+										<a href={cave.image} target="_blank">
+											<img height={80} src={cave.image} />
+										</a>
+									</td>
 									<td>
 										<Button
 											variant="warning"

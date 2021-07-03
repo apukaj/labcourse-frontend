@@ -13,8 +13,11 @@ class Parks extends React.Component {
 		  parks: [],
 		  park: {
         name: '',
-        location: ''
+				city: '',
+        address: '',
+				image: ''
       },
+			cities: [],
 			editId: ''
 		}
 	
@@ -32,6 +35,14 @@ class Parks extends React.Component {
 				 }).catch(error => {
 					 console.log(error.response.data)
 				 })
+
+		axios.get('https://localhost:5001/api/cities')
+				 .then(response => {
+					 this.setState({cities: response.data})
+					 console.log(response)
+				 }).catch(error => {
+				 	 console.log(error)
+				 })
 	}
 
 	handleSubmit(e) {
@@ -45,10 +56,12 @@ class Parks extends React.Component {
 
 		axios.post('https://localhost:5001/api/parks', {
 			name: park.name,
-      location: park.location
+			city: park.city,
+      address: park.address,
+			image: park.image
 		}).then(response => {
 			this.setState({parks: [...parks, response.data]})
-			this.setState({park: {name:'',location:''}})
+			this.setState({park: {name:'',city:'',address:'',image:''}})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -69,16 +82,22 @@ class Parks extends React.Component {
 		axios.put(`https://localhost:5001/api/parks/${editId}`, {
 			id: editId,
 			name: park.name,
-			location: park.location
+			city: park.city,
+			address: park.address,
+			image: park.image
 		}).then(response => {
 			const idx = parks.indexOf(parks.find(park => park.id === editId))
 			this.state.parks[idx].name = park.name
-			this.state.parks[idx].location = park.location
+			this.state.parks[idx].city = park.city
+			this.state.parks[idx].address = park.address
+			this.state.parks[idx].image = park.image
 			this.setState({
 				editId: '',
 				park: {
 					name: '',
-					location: ''
+					city: '',
+					address: '',
+					image: ''
 				}
 			})
 		}).catch(error => {
@@ -89,11 +108,11 @@ class Parks extends React.Component {
 	handleEditClick(id) {
 		const { parks } = this.state
 		const editPark = parks.find(park => park.id === id)
-		this.setState({ park: { name: editPark.name, location: editPark.location}, editId: id})
+		this.setState({ park: { name: editPark.name, city: editPark.city, address: editPark.address, image: editPark.image }, editId: id})
 	}
 
 	render() {
-		const { park, parks, editId } = this.state
+		const { park, parks, cities, editId } = this.state
 		return (
 		<div>
 			<Row>
@@ -110,13 +129,47 @@ class Parks extends React.Component {
 							/>
 						</Form.Group>
 
+						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
+							<Form.Label>City</Form.Label>
+							<Form.Control
+								as="select"
+								placeholder="City"
+								value={park.city}
+								onChange={e => this.setState({
+                  park: {
+                    ...park,
+                    city: e.target.value
+                  }
+                })}
+							>
+								<option value="" defaultValue>Select</option>
+								{
+									cities.map(city => 
+										<option key={city.id} value={city.name}>
+											{city.name}
+										</option>
+									)
+								}
+							</Form.Control>
+						</Form.Group>
+
             <Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Location</Form.Label>
+							<Form.Label>Address</Form.Label>
 							<Form.Control
 								type="text"
-								placeholder="Location"
-								value={park.location}
-								onChange={e => this.setState({park: {...park, location: e.target.value}})}
+								placeholder="Address"
+								value={park.address}
+								onChange={e => this.setState({park: {...park, address: e.target.value}})}
+							/>
+						</Form.Group>
+
+						<Form.Group controlId="image" style={{ marginBottom: 15 }}>
+							<Form.Label>Image</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Image url"
+								value={park.image}
+								onChange={e => this.setState({park: {...park, image: e.target.value}})}
 							/>
 						</Form.Group>
 
@@ -126,7 +179,7 @@ class Parks extends React.Component {
 								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
 									Edit park
 								</Button>
-								<Button variant="primary" onClick={() => this.setState({editId: '', park: { name: '', location: ''}})}>New Park</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', park: { name: '', address: ''}})}>New Park</Button>
 							</div> :
 							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
 								Save park
@@ -140,7 +193,9 @@ class Parks extends React.Component {
 							<tr>
 								<th>#</th>
 								<th>Name</th>
-                <th>Location</th>
+								<th>City</th>
+                <th>Address</th>
+								<th>Image</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
@@ -150,7 +205,13 @@ class Parks extends React.Component {
 								parks.map(park => <tr key={park.id}>
 									<td>{park.id}</td>
 									<td>{park.name}</td>
-									<td>{park.location}</td>
+									<td>{park.city}</td>
+									<td>{park.address}</td>
+									<td>
+										<a href={park.image} target="_blank">
+											<img height={80} src={park.image} />
+										</a>
+									</td>
 									<td>
 										<Button
 											variant="warning"

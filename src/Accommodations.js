@@ -16,7 +16,8 @@ class Accommodations extends React.Component {
         city: '',
         address: '',
         type: '',
-        facilities: []
+        facilities: [],
+				image: ''
       },
       cities: [],
       types: [],
@@ -80,7 +81,7 @@ class Accommodations extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault()
 		const { accommodations } = this.state
-    const { name, city, address, type, facilities } = this.state.accommodation
+    const { name, city, address, type, image, facilities } = this.state.accommodation
 		// if (!type) {
 		// 	alert("Please provide a type name!")
 		// 	return
@@ -91,7 +92,8 @@ class Accommodations extends React.Component {
       city,
       address,
       type,
-      facilities
+      facilities,
+			image
 		}).then(response => {
 			this.setState({accommodations: [...accommodations, response.data]})
 			this.setState({accommodation: {
@@ -99,6 +101,7 @@ class Accommodations extends React.Component {
         city: '',
         address: '',
         type: '',
+				image: ''
       }})
 		}).catch(error => {
 			console.log(error)
@@ -123,7 +126,8 @@ class Accommodations extends React.Component {
 			city: accommodation.city,
 			address: accommodation.address,
 			type: accommodation.type,
-			facilities: accommodation.facilities
+			facilities: accommodation.facilities,
+			image: accommodation.image
 		}).then(response => {
 			const idx = accommodations.indexOf(accommodations.find(accommodation => accommodation.id === editId))
 			this.state.accommodations[idx].name = accommodation.name
@@ -131,6 +135,7 @@ class Accommodations extends React.Component {
 			this.state.accommodations[idx].address = accommodation.address
 			this.state.accommodations[idx].type = accommodation.type
 			this.state.accommodations[idx].facilities = accommodation.facilities
+			this.state.accommodations[idx].image = accommodation.image
 			this.setState({
 				editId: '',
 				accommodation: {
@@ -138,7 +143,8 @@ class Accommodations extends React.Component {
 					city: '',
 					address: '',
 					type: '',
-					facilities: []
+					facilities: [],
+					image: ''
 				}
 			})
 		}).catch(error => {
@@ -155,7 +161,8 @@ class Accommodations extends React.Component {
 				city: editAccommodation.city,
 				address: editAccommodation.address,
 				type: editAccommodation.type,
-				facilities: editAccommodation.facilities
+				facilities: editAccommodation.facilities,
+				image: editAccommodation.image
 			}, 
 			editId: id
 		})
@@ -271,6 +278,21 @@ class Accommodations extends React.Component {
 							</Form.Control>
 						</Form.Group>
 
+						<Form.Group controlId="image" style={{ marginBottom: 15 }}>
+							<Form.Label>Image</Form.Label>
+							<Form.Control
+								type="text"
+								placeholder="Image url"
+								value={accommodation.image}
+								onChange={e => this.setState({
+                  accommodation: {
+                    ...accommodation,
+                    image: e.target.value
+                  }
+                })}
+							/>
+						</Form.Group>
+
 						{
 							editId ?
 							<div>
@@ -295,6 +317,7 @@ class Accommodations extends React.Component {
                 <th>Address</th>
                 <th>Type</th>
                 <th>Facilities</th>
+								<th>Image</th>
 								<th>Edit</th>
 								<th>Delete</th>
 							</tr>
@@ -308,6 +331,11 @@ class Accommodations extends React.Component {
                   <td>{acc.address}</td>
                   <td>{acc.type}</td>
                   <td>{acc.facilities}</td>
+									<td>
+										<a href={acc.image} target="_blank">
+											<img height={80} src={acc.image} />
+										</a>
+									</td>
 									<td>
 										<Button
 											variant="warning"

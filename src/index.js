@@ -20,27 +20,67 @@ import Restaurants from './Restaurants'
 import Monuments from './Monuments'
 import Nature from './Nature'
 import BusinessTypes from './BusinessTypes'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import ShoppingFacilities from './ShoppingFacilities'
+import Shopping from './Shopping'
+import Promotions from './Promotions'
+import AccommodationReservations from './AccommodationReservations'
+import RestaurantReservations from './RestaurantReservations'
+import Gallery from './Galleries'
+
+import VisitorsNature from './Visitors/Nature'
+import VisitorsPark from './Visitors/Park'
+import VisitorsCave from './Visitors/Cave'
+import VisitorsMonument from './Visitors/Monument'
+import VisitorsHotels from './Visitors/Hotels'
+import VisitorsHotel from './Visitors/Hotel'
+import VisitorsRestaurants from './Visitors/Restaurants'
+import VisitorsRestaurant from './Visitors/Restaurant'
+import VisitorsShopping from './Visitors/Shopping'
+import VisitorsList from './Visitors/List'
+import VisitorsGallery from './Visitors/Gallery'
+import VisitorsPromotions from './Visitors/Promotions'
+
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 ReactDOM.render((
   <BrowserRouter>
     <Route path="/" component={App} />
     <Route path="/home" component={Home} />
     <Route path="/about" component={About} />
-    <Route path="/cities" component={Cities} />
-    <Route path="/restaurant-types" component={RestaurantTypes} />
-    <Route path="/restaurants" component={Restaurants} />
-    <Route path="/accommodation-types" component={AccommodationTypes} />
-    <Route path="/accommodation-facilities" component={AccommodationFacilities} />
-    <Route path="/accommodations" component={Accommodations} />
+    <Route path="/admin/cities" component={Cities} />
+    <Route path="/admin/restaurant-types" component={RestaurantTypes} />
+    <Route path="/admin/restaurants" component={Restaurants} />
+    <Route path="/admin/accommodation-types" component={AccommodationTypes} />
+    <Route path="/admin/accommodation-facilities" component={AccommodationFacilities} />
+    <Route path="/admin/accommodations" component={Accommodations} />
     <Route path="/login" component={Login} />
     <Route path="/register" component={Register} />
-    <Route path="/menus" component={Menu} />
-    <Route path="/rooms" component={RoomType} />
-    <Route path="/places" component={VendetTuristike} />
-    <Route path="/monuments" component={Monuments} />
-    <Route path="/nature" component={Nature} />
-    <Route path="/business-types" component={BusinessTypes} />
+    <Route path="/admin/menus" component={Menu} />
+    <Route path="/admin/rooms" component={RoomType} />
+    <Route path="/admin/places" component={VendetTuristike} />
+    <Route path="/admin/monuments" component={Monuments} />
+    <Route path="/admin/nature" component={Nature} />
+    <Route path="/admin/business-types" component={BusinessTypes} />
+    <Route path="/admin/promotions" component={Promotions} />
+    <Route path="/admin/shopping-facilities" component={ShoppingFacilities} />
+    <Route path="/admin/shopping" component={Shopping} />
+    <Route path="/admin/accommodation-reservations" component={AccommodationReservations} />
+    <Route path="/admin/restaurant-reservations" component={RestaurantReservations} />
+    <Route path="/admin/gallery" component={Gallery} />
+
+    <Route path="/nature" component={VisitorsNature} />
+    <Route path="/hotels" component={VisitorsHotels} />
+    <Route path="/restaurants" component={VisitorsRestaurants} />
+    <Route path="/park/:id" component={VisitorsPark} />
+    <Route path="/monument/:id" component={VisitorsMonument} />
+    <Route path="/cave/:id" component={VisitorsCave} />
+    <Route path="/hotel/:id" component={VisitorsHotel} />
+    <Route path="/restaurant/:id" component={VisitorsRestaurant} />
+    <Route path="/shopping/:id" component={VisitorsShopping} />
+    <Route path="/list" component={VisitorsList} />
+    <Route path="/gallery" component={VisitorsGallery} />
+    <Route path="/promotions" component={VisitorsPromotions} />
+
   </BrowserRouter>
 ), document.getElementById('root'));
 

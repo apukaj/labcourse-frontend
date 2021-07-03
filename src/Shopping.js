@@ -6,22 +6,20 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 
-class Restaurants extends React.Component {
+class Shopping extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-		  restaurants: [],
-			restaurant: {
+		  shoppings: [],
+			shopping: {
         name: '',
         city: '',
         address: '',
-        type: '',
-        menus: [],
+        facilities: [],
 				image: ''
       },
       cities: [],
-      types: [],
-      menus: [],
+      facilities: [],
 			editId: ''
 		}
 	
@@ -32,26 +30,15 @@ class Restaurants extends React.Component {
 	}
 
 	componentDidMount() {
-		this.fetchRestaurants()
-    this.fetchTypes()
+		this.fetchShoppings()
     this.fetchCities()
-    this.fetchMenus()
+    this.fetchFacilities()
 	}
 
-  fetchRestaurants() {
-    axios.get('https://localhost:5001/api/restaurants')
+  fetchShoppings() {
+    axios.get('https://localhost:5001/api/shoppings')
 				 .then(response => {
-					 this.setState({restaurants: response.data})
-					 console.log(response)
-				 }).catch(error => {
-					 console.log(error.response.data)
-				 })
-  }
-
-  fetchTypes() {
-    axios.get('https://localhost:5001/api/restauranttypes')
-				 .then(response => {
-					 this.setState({types: response.data})
+					 this.setState({shoppings: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -68,10 +55,10 @@ class Restaurants extends React.Component {
 				 })
   }
 
-  fetchMenus() {
-    axios.get('https://localhost:5001/api/menus')
+  fetchFacilities() {
+    axios.get('https://localhost:5001/api/shoppingfacilities')
 				 .then(response => {
-					 this.setState({menus: response.data})
+					 this.setState({facilities: response.data})
 					 console.log(response)
 				 }).catch(error => {
 					 console.log(error.response.data)
@@ -80,28 +67,25 @@ class Restaurants extends React.Component {
 
 	handleSubmit(e) {
 		e.preventDefault()
-		const { restaurants } = this.state
-    const { name, city, address, type, menus, image } = this.state.restaurant
+		const { shoppings } = this.state
+    const { name, city, address, image, facilities } = this.state.shopping
 		// if (!type) {
 		// 	alert("Please provide a type name!")
 		// 	return
 		// }
 
-		axios.post('https://localhost:5001/api/restaurants', {
+		axios.post('https://localhost:5001/api/shoppings', {
 			name,
       city,
       address,
-      type,
-      menus,
+      facilities,
 			image
 		}).then(response => {
-			this.setState({restaurants: [...restaurants, response.data]})
-			this.setState({restaurant: {
+			this.setState({shoppings: [...shoppings, response.data]})
+			this.setState({shopping: {
         name: '',
         city: '',
         address: '',
-        type: '',
-        menus: [],
 				image: ''
       }})
 		}).catch(error => {
@@ -110,9 +94,9 @@ class Restaurants extends React.Component {
 	}
 
 	handleDelete(id) {
-		const { restaurants } = this.state
-		axios.delete(`https://localhost:5001/api/restaurants/${id}`).then(response => {
-			this.setState({restaurants: restaurants.filter(restaurant => restaurant.id !== id)})
+		const { shoppings } = this.state
+		axios.delete(`https://localhost:5001/api/shoppings/${id}`).then(response => {
+			this.setState({shoppings: shoppings.filter(shopping => shopping.id !== id)})
 		}).catch(error => {
 			console.log(error.response.data)
 		})
@@ -120,31 +104,28 @@ class Restaurants extends React.Component {
 
 	handleEditSubmit(e) {
 		e.preventDefault()
-		const { restaurant, restaurants, editId } = this.state
-		axios.put(`https://localhost:5001/api/restaurants/${editId}`, {
+		const { shopping, shoppings, editId } = this.state
+		axios.put(`https://localhost:5001/api/shoppings/${editId}`, {
 			id: editId,
-			name: restaurant.name,
-			city: restaurant.city,
-			address: restaurant.address,
-			type: restaurant.type,
-			menus: restaurant.menus,
-			image: restaurant.image
+			name: shopping.name,
+			city: shopping.city,
+			address: shopping.address,
+			facilities: shopping.facilities,
+			image: shopping.image
 		}).then(response => {
-			const idx = restaurants.indexOf(restaurants.find(restaurant => restaurant.id === editId))
-			this.state.restaurants[idx].name = restaurant.name
-			this.state.restaurants[idx].city = restaurant.city
-			this.state.restaurants[idx].address = restaurant.address
-			this.state.restaurants[idx].type = restaurant.type
-			this.state.restaurants[idx].menus = restaurant.menus
-			this.state.restaurants[idx].image = restaurant.image
+			const idx = shoppings.indexOf(shoppings.find(shopping => shopping.id === editId))
+			this.state.shoppings[idx].name = shopping.name
+			this.state.shoppings[idx].city = shopping.city
+			this.state.shoppings[idx].address = shopping.address
+			this.state.shoppings[idx].facilities = shopping.facilities
+			this.state.shoppings[idx].image = shopping.image
 			this.setState({
 				editId: '',
-				restaurant: {
+				shopping: {
 					name: '',
 					city: '',
 					address: '',
-					type: '',
-					menus: [],
+					facilities: [],
 					image: ''
 				}
 			})
@@ -154,39 +135,38 @@ class Restaurants extends React.Component {
 	}
 
 	handleEditClick(id) {
-		const { restaurants } = this.state
-		const editRestaurant = restaurants.find(restaurant => restaurant.id === id)
+		const { shoppings } = this.state
+		const editShopping = shoppings.find(shopping => shopping.id === id)
 		this.setState({
-			restaurant: {
-				name: editRestaurant.name,
-				city: editRestaurant.city,
-				address: editRestaurant.address,
-				type: editRestaurant.type,
-				menus: editRestaurant.menus,
-				image: editRestaurant.image
+			shopping: {
+				name: editShopping.name,
+				city: editShopping.city,
+				address: editShopping.address,
+				facilities: editShopping.facilities,
+				image: editShopping.image
 			}, 
 			editId: id
 		})
 	}
 
 	render() {
-		const { restaurant, restaurants, editId } = this.state
-		const { cities, types, menus } = this.state
+		const { shopping, shoppings, editId } = this.state
+		const { cities, facilities } = this.state
 		return (
 		<div>
 			<Row>
 				<Col>
-					<h1>Add restaurant</h1>
+					<h1>Add shopping</h1>
 					<Form onSubmit={this.handleSubmit}>
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
 							<Form.Label>Name</Form.Label>
 							<Form.Control
 								type="text"
 								placeholder="Name"
-								value={restaurant.name}
+								value={shopping.name}
 								onChange={e => this.setState({
-                  restaurant: {
-                    ...restaurant,
+                  shopping: {
+                    ...shopping,
                     name: e.target.value
                   }
                 })}
@@ -198,10 +178,10 @@ class Restaurants extends React.Component {
 							<Form.Control
 								as="select"
 								placeholder="City"
-								value={restaurant.city}
+								value={shopping.city}
 								onChange={e => this.setState({
-                  restaurant: {
-                    ...restaurant,
+                  shopping: {
+                    ...shopping,
                     city: e.target.value
                   }
                 })}
@@ -222,10 +202,10 @@ class Restaurants extends React.Component {
 							<Form.Control
 								type="text"
 								placeholder="Address"
-								value={restaurant.address}
+								value={shopping.address}
 								onChange={e => this.setState({
-                  restaurant: {
-                    ...restaurant,
+                  shopping: {
+                    ...shopping,
                     address: e.target.value
                   }
                 })}
@@ -233,46 +213,22 @@ class Restaurants extends React.Component {
 						</Form.Group>
 
 						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Restaurant type</Form.Label>
-							<Form.Control
-								as="select"
-								placeholder="Type"
-								value={restaurant.type}
-								onChange={e => this.setState({
-                  restaurant: {
-                    ...restaurant,
-                    type: e.target.value
-                  }
-                })}
-							>
-								<option value="" defaultValue>Select</option>
-								{
-									types.map(type =>
-										<option key={type.id} value={type.name}>
-											{type.name}
-										</option>
-									)
-								}
-							</Form.Control>
-						</Form.Group>
-
-						<Form.Group controlId="name" style={{ marginBottom: 15 }}>
-							<Form.Label>Restaurant menus</Form.Label>
+							<Form.Label>Shopping facilities</Form.Label>
 							<Form.Control
 								as="select"
 								placeholder="Facilities"
 								multiple
 								onChange={e => this.setState({
-                  restaurant: {
-                    ...restaurant,
-                    menus: [].slice.call(e.target.selectedOptions).map(it=>it.value)
+                  shopping: {
+                    ...shopping,
+                    facilities: [].slice.call(e.target.selectedOptions).map(it=>it.value)
                   }
                 })}
 							>
 								{
-									menus.map(menu =>
-										<option key={menu.id} value={menu.name}>
-											{menu.name}
+									facilities.map(facility =>
+										<option key={facility.id} value={facility.name}>
+											{facility.name}
 										</option>
 									)
 								}
@@ -284,10 +240,10 @@ class Restaurants extends React.Component {
 							<Form.Control
 								type="text"
 								placeholder="Image url"
-								value={restaurant.image}
+								value={shopping.image}
 								onChange={e => this.setState({
-                  restaurant: {
-                    ...restaurant,
+                  shopping: {
+                    ...shopping,
                     image: e.target.value
                   }
                 })}
@@ -298,12 +254,12 @@ class Restaurants extends React.Component {
 							editId ?
 							<div>
 								<Button style={{ marginRight: 5 }} variant="primary" type="submit" onClick={this.handleEditSubmit}>
-									Edit restaurant
+									Edit shopping
 								</Button>
-								<Button variant="primary" onClick={() => this.setState({editId: '', restaurant: { name: '', city: '', address: '', type: '', menus: []}})}>New Restaurant</Button>
+								<Button variant="primary" onClick={() => this.setState({editId: '', shopping: { name: '', city: '', address: '', type: '', facilities: []}})}>New Shopping</Button>
 							</div> :
 							<Button variant="primary" type="submit" onClick={this.handleSubmit}>
-								Save restaurant
+								Save shopping
 							</Button>
 						}
 					</Form>
@@ -316,8 +272,7 @@ class Restaurants extends React.Component {
 								<th>Name</th>
                 <th>City</th>
                 <th>Address</th>
-                <th>Type</th>
-                <th>Menus</th>
+                <th>Facilities</th>
 								<th>Image</th>
 								<th>Edit</th>
 								<th>Delete</th>
@@ -325,29 +280,28 @@ class Restaurants extends React.Component {
 						</thead>
 						<tbody>
 							{
-								restaurants.map(rest => <tr key={rest.id}>
-									<td>{rest.id}</td>
-									<td>{rest.name}</td>
-                  <td>{rest.city}</td>
-                  <td>{rest.address}</td>
-                  <td>{rest.type}</td>
-                  <td>{(rest.menus || []).join(', ')}</td>
+								shoppings.map(acc => <tr key={acc.id}>
+									<td>{acc.id}</td>
+									<td>{acc.name}</td>
+                  <td>{acc.city}</td>
+                  <td>{acc.address}</td>
+                  <td>{acc.facilities}</td>
 									<td>
-										<a href={rest.image} target="_blank">
-											<img height={80} src={rest.image} />
+										<a href={acc.image} target="_blank">
+											<img height={80} src={acc.image} />
 										</a>
 									</td>
 									<td>
 										<Button
 											variant="warning"
-											onClick={() => this.handleEditClick(rest.id)}>
+											onClick={() => this.handleEditClick(acc.id)}>
 											Edit
 										</Button>
 									</td>
 									<td>
 										<Button
 											variant="danger"
-											onClick={() => this.handleDelete(rest.id)}
+											onClick={() => this.handleDelete(acc.id)}
 										>
 											Delete
 										</Button>
@@ -362,4 +316,4 @@ class Restaurants extends React.Component {
 		)
 	}
 }
-export default Restaurants;
+export default Shopping;
